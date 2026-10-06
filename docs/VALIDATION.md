@@ -4,7 +4,7 @@ Validated on Windows, 2026-10-06, with Python 3.14, Streamlit 1.65.0, NumPy 2.5.
 
 ## Automated checks
 
-Before modifications, the clean v1.1.1 baseline (`f1241a34b6ce75b45d87c2d16f7e99059e97f21c`) passed **77 tests, 0 failed, 0 skipped**. The full v1.2.0 suite passed **151 tests, 0 failed, 0 skipped** in 175.68 seconds. No test was removed. Existing assertions were updated only for adaptive display precision and the explicitly unified internal chain state.
+Before modifications, the clean v1.1.1 baseline (`f1241a34b6ce75b45d87c2d16f7e99059e97f21c`) passed **77 tests, 0 failed, 0 skipped**. The full v1.2.0 suite passed **151 tests, 0 failed, 0 skipped** in 87.28 seconds (final rerun after the narrow-screen navigation fix). No test was removed. Existing assertions were updated only for adaptive display precision and the explicitly unified internal chain state.
 
 New tests cover ordinary/close-focus datum conversion, explicit principal-plane inputs including magnification above 1, geometric blur at translated limits, exact/below/above hyperfocal, impossible geometry, adaptive display, infinity and signed zero, preset metadata and rotated rectangles, duplicate IDs, Wilson reference cases, zero/all failures, Uniform/Normal semantics, shared chain and target, stale-result invalidation, bilingual export fields, and all seven workspaces' theme redraws in both languages. Widget-policy tests inspect default/state conflicts rather than suppressing warnings. Chart tests check palette colors and absence of global Matplotlib state changes.
 
@@ -45,6 +45,8 @@ Specific scenarios:
 - README screenshots were recaptured from the current UI. They show version 1.2.0, consistent themes and no Deploy button. README launch commands and sidebar theme instructions were reviewed against the code and launch process.
 
 Browser automation occasionally captured a partially redrawn frame or timed out on full-page screenshots; steady-state views were inspected with normal viewport captures. There were no corresponding app exceptions. Screenshots are viewport excerpts, not physical-device tests.
+
+A final 663-pixel browser check caught the sidebar opener inside the toolbar container. The CSS now hides only the action/menu sections. After restarting the app, the opener was visible, the sidebar opened/closed, and Dark mode redrew the FOV chart correctly. The entire 151-test suite passed again after this fix.
 
 ## Scope of evidence
 

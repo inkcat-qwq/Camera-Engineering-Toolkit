@@ -14,7 +14,7 @@ The [official deployment guide](https://docs.streamlit.io/deploy/streamlit-commu
 
 ## Application theme
 
-The app's sidebar Light/Dark state owns its native widget palette, CSS and Matplotlib colors. Streamlit 1.65.0 is pinned: its native theme bridge receives `SET_CUSTOM_THEME_CONFIG` via a trusted same-origin `window.postMessage`, with no process-wide theme mutation. Only static application colors are passed. The top-right toolbar is hidden so it cannot create a second conflicting theme state or expose a Deploy button.
+The app's sidebar Light/Dark state owns its native widget palette, CSS and Matplotlib colors. Streamlit 1.65.0 is pinned: its native theme bridge receives `SET_CUSTOM_THEME_CONFIG` via a trusted same-origin `window.postMessage`, with no process-wide theme mutation. Only static application colors are passed. Top-right toolbar actions and the framework menu are hidden so they cannot create a second conflicting theme state or expose a Deploy button. The toolbar container stays visible because it also holds the narrow-screen sidebar opener.
 
 `client.allowedOrigins` explicitly includes loopback HTTP and this app's Community Cloud origins. When deploying on another domain, add only the exact trusted app / embed origin to that setting and validate both theme directions, including the canvas editor. Do not replace the list with an unrestricted wildcard. A future Streamlit upgrade must revalidate the native-theme protocol, widget defaults, state retention and browser rendering; AppTest alone cannot verify browser postMessage handling.
 

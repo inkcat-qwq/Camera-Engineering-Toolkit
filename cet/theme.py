@@ -34,5 +34,6 @@ def theme_css(theme):
     [data-testid="stSidebar"] {{background-color:{p['secondaryBackgroundColor']};}}
     [data-testid="stMetric"] {{border-color:{p['borderColor']} !important;}}
     .eyebrow {{color:{p['primaryColor']} !important;}}
-    [data-testid="stToolbar"], .st-key-theme_bridge {{display:none;}}
+    /* Keep the toolbar itself: it also owns the narrow-screen sidebar opener. */
+    [data-testid="stToolbarActions"], [data-testid="stMainMenu"], .st-key-theme_bridge {{display:none;}}
     </style>'''
