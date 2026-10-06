@@ -30,7 +30,7 @@ def test_inverse_fov_custom_input_and_navigation_persistence():
     assert app.number_input(key="p_fov_focal").value == 120
     app.radio(key="p_fov_mode").set_value("Focal length").run()
     app.number_input(key="p_fov_angle").set_value(90).run()
-    assert any(m.value == "24.000 mm" for m in app.metric)
+    assert any(m.value == "24.00 mm" for m in app.metric)
     assert not app.exception
 
 
@@ -110,19 +110,19 @@ def test_edited_components_and_simulation_survive_language_change():
     app = open_tool("Tolerance / Monte Carlo")
     # AppTest has no data-editor input API. Load committed custom records,
     # then exercise the real editor, simulation and language callbacks.
-    records = [dict(row) for row in app.session_state["mc_table_result"]]
+    records = [dict(row) for row in app.session_state["chain_rows"]]
     records[1].update(name="测试转接环", nominal_mm=10.02, distribution="Normal (±3σ)")
-    app.session_state["mc_table_seed"] = records
+    app.session_state["chain_editor_seed"] = records
     app.run()
-    assert app.session_state["mc_table_result"][1]["name"] == "测试转接环"
+    assert app.session_state["chain_rows"][1]["name"] == "测试转接环"
     app.button(key="run_mc").click().run()
     signature, result, samples = app.session_state["simulation"]
     for language in ("zh", "en", "zh"):
         app.selectbox(key="p_language").set_value(language).run()
         assert not app.exception
         assert not app.error
-        assert app.session_state["mc_table_result"][1]["name"] == "测试转接环"
-        assert app.session_state["mc_table_result"][1]["nominal_mm"] == 10.02
+        assert app.session_state["chain_rows"][1]["name"] == "测试转接环"
+        assert app.session_state["chain_rows"][1]["nominal_mm"] == 10.02
         assert app.session_state["simulation"][0] == signature
         assert app.session_state["simulation"][1] == result
         assert np.array_equal(app.session_state["simulation"][2], samples)

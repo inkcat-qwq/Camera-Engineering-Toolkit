@@ -1,4 +1,4 @@
 include app.py requirements*.txt launch.bat Dockerfile LICENSE
 recursive-include .streamlit *.toml
-recursive-include docs *.md *.jpg
+recursive-include docs *.md *.png
 recursive-include examples *.json *.csv

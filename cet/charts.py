@@ -5,6 +5,7 @@ import numpy as np
 from importlib.resources import files
 from matplotlib.text import Text
 from .i18n import translate
+from .theme import palette
 
 
 def prepare_font(fig):
@@ -22,7 +23,8 @@ COLORS = ["#168b99", "#dd9740", "#7c79c9", "#cc6882", "#4e9d72", "#559ac5"]
 def canvas(dark=False, size=(8, 3.8)):
     fig = Figure(figsize=size, layout="constrained")
     ax = fig.subplots()
-    bg, fg = ("#131b27", "#dbe5f2") if dark else ("#f7f9fc", "#304057")
+    colors = palette("Dark" if dark else "Light")
+    bg, fg = colors["secondaryBackgroundColor"], colors["textColor"]
     fig.set_facecolor(bg)
     ax.set_facecolor(bg)
     ax.tick_params(colors=fg, labelsize=9)
@@ -30,7 +32,7 @@ def canvas(dark=False, size=(8, 3.8)):
     ax.yaxis.label.set_color(fg)
     ax.title.set_color(fg)
     for spine in ax.spines.values():
-        spine.set_color("#536075" if dark else "#d5dce7")
+        spine.set_color(colors["borderColor"])
     ax.grid(alpha=.13, color=fg)
     ax.set_axisbelow(True)
     return fig, ax, fg

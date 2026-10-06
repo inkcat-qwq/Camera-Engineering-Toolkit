@@ -20,3 +20,8 @@ maxUploadSize = 2
 
 [browser]
 gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+# Trusted own-app origins for the session-local native-theme bridge.
+allowedOrigins = ["http://localhost:*", "http://127.0.0.1:*", "https://camera-engineering-toolkit.streamlit.app", "https://share.streamlit.io"]

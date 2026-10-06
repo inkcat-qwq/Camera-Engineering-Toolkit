@@ -1,4 +1,4 @@
-# Deployment
+# Deployment — v1.2.0
 
 Public deployment: **https://camera-engineering-toolkit.streamlit.app/**. Source: `inkcat-qwq/Camera-Engineering-Toolkit`, branch `main`, entry point `app.py`, Python 3.14. The initial deployment was verified on 2026-10-06. Visitors do not need to install Python.
 
@@ -11,6 +11,12 @@ Public deployment: **https://camera-engineering-toolkit.streamlit.app/**. Source
 5. Deploy, then open all seven workspaces and run the Monte Carlo example. Keep the generated app URL in the repository description / README.
 
 The [official deployment guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy) describes the current account and repository connection flow. Connecting a previously unconnected account may require the owner to approve access. No secrets are required by this app.
+
+## Application theme
+
+The app's sidebar Light/Dark state owns its native widget palette, CSS and Matplotlib colors. Streamlit 1.65.0 is pinned: its native theme bridge receives `SET_CUSTOM_THEME_CONFIG` via a trusted same-origin `window.postMessage`, with no process-wide theme mutation. Only static application colors are passed. The top-right toolbar is hidden so it cannot create a second conflicting theme state or expose a Deploy button.
+
+`client.allowedOrigins` explicitly includes loopback HTTP and this app's Community Cloud origins. When deploying on another domain, add only the exact trusted app / embed origin to that setting and validate both theme directions, including the canvas editor. Do not replace the list with an unrestricted wildcard. A future Streamlit upgrade must revalidate the native-theme protocol, widget defaults, state retention and browser rendering; AppTest alone cannot verify browser postMessage handling.
 
 ## Docker
 

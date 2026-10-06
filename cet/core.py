@@ -1,6 +1,7 @@
 """Paraxial/rectilinear models. All internal lengths are millimetres.
 
-Object distances are measured from the lens principal plane, not sensor plane.
+The base DoF equations use principal-plane distance; dof_with_datum wraps them
+with explicit image-plane or principal-plane measurement semantics.
 See docs/MODELS.md for derivations, assumptions and sign conventions.
 """
 from __future__ import annotations
@@ -15,6 +16,8 @@ import numpy as np
 
 
 def finite(value: float, name: str, *, positive=False, nonnegative=False) -> float:
+    if isinstance(value, (bool, np.bool_)):
+        raise ValueError(f"{name} must be a number.")
     try:
         result = float(value)
     except (TypeError, ValueError) as exc:
@@ -44,6 +47,8 @@ class Format:
     def __post_init__(self):
         object.__setattr__(self, "width_mm", finite(self.width_mm, "Width", positive=True))
         object.__setattr__(self, "height_mm", finite(self.height_mm, "Height", positive=True))
+        if not math.isfinite(self.width_mm * self.height_mm):
+            raise ValueError("Image area is too large for this model.")
 
     @property
     def diagonal_mm(self):
@@ -57,8 +62,9 @@ class Format:
 
 
 def presets():
-    data = json.loads(files("cet").joinpath("data/formats.json").read_text(encoding="utf-8"))
-    return {item["name"]: Format(**item) for item in data}
+    # Legacy name-keyed calculation interface; metadata lives in the catalog.
+    from .formats import preset_catalog
+    return {item.legacy_name: item.as_format() for item in preset_catalog().values()}
 
 
 def sensor(fmt: Format, pixels_x=None, pixels_y=None):
@@ -108,12 +114,82 @@ def depth_of_field(focal_mm, f_number, distance_mm, coc_mm):
     c = finite(coc_mm, "Circle of confusion", positive=True)
     if s <= f:
         raise ValueError("Focus distance must exceed focal length (measured from the principal plane).")
-    q = f * f / (n * c)
+    try:
+        q = f * f / (n * c)
+    except (OverflowError, ZeroDivisionError) as exc:
+        raise ValueError("Parameters exceed the numerical range of this model.") from exc
+    if not math.isfinite(q) or q <= 0:
+        raise ValueError("Parameters exceed the numerical range of this model.")
     h = q + f
     near = s * q / (q + s - f)
     far = math.inf if s >= h else s * q / (q - s + f)
+    if not all(math.isfinite(v) for v in (h, near)) or (s < h and not math.isfinite(far)):
+        raise ValueError("Parameters exceed the numerical range of this model.")
     return {"hyperfocal_mm": h, "near_mm": near, "far_mm": far,
             "total_dof_mm": far - near, "front_dof_mm": s - near, "rear_dof_mm": far - s}
+
+
+DISTANCE_DATUMS = ("Image / sensor / film plane", "Front principal plane")
+
+
+def image_distance(focal_mm, object_mm):
+    """Focused image conjugate v; distances from coincident thin-lens planes."""
+    f = finite(focal_mm, "Focal length", positive=True)
+    s = finite(object_mm, "Focus distance", positive=True)
+    if s <= f:
+        raise ValueError("Focus distance must exceed focal length (measured from the principal plane).")
+    return finite(f / (1 - f / s), "Image distance", positive=True)
+
+
+def principal_to_image_distance(focal_mm, object_mm):
+    """Subject-to-image-plane separation D = s + v at this focus setting."""
+    v = image_distance(focal_mm, object_mm)
+    return finite(float(object_mm) + v, "Subject-to-image-plane distance", positive=True)
+
+
+def image_to_principal_distance(focal_mm, total_mm):
+    """Photographic branch s >= 2f (magnification <= 1), including 1:1.
+
+    D = s + fs/(s-f) has two roots. Select the larger object conjugate.
+    Use a dimensionless discriminant to avoid overflow at long distances.
+    """
+    f = finite(focal_mm, "Focal length", positive=True)
+    total = finite(total_mm, "Subject-to-image-plane distance", positive=True)
+    if total / f < 4:
+        raise ValueError("Subject-to-image-plane distance must be at least 4 × focal length in this thin-lens model.")
+    return total * (0.5 + 0.5 * math.sqrt(1 - 4 * (f / total)))
+
+
+def dof_with_datum(focal_mm, f_number, distance_mm, coc_mm,
+                   datum=DISTANCE_DATUMS[0]):
+    """Presentation model around the unchanged principal-plane DoF equations.
+
+    Near/far endpoints shift by the CURRENT focused image conjugate, not by
+    refocusing at each endpoint. Hyperfocal is a different focus setting and
+    uses its own conjugate. DoF widths are translation invariant.
+    """
+    if datum not in DISTANCE_DATUMS:
+        raise ValueError("Unknown distance datum.")
+    distance_mm = finite(distance_mm, "Focus distance", positive=True)
+    s = (image_to_principal_distance(focal_mm, distance_mm)
+         if datum == DISTANCE_DATUMS[0] else finite(distance_mm, "Focus distance", positive=True))
+    v = image_distance(focal_mm, s)
+    result = depth_of_field(focal_mm, f_number, s, coc_mm)
+    h = result["hyperfocal_mm"]
+    image_mode = datum == DISTANCE_DATUMS[0]
+    # Image-plane mode only covers the s >= 2f branch. If H < 2f, every
+    # accessible focus setting already reaches infinity: the first is 1:1.
+    hyper_setting = principal_to_image_distance(focal_mm, max(h, 2 * float(focal_mm))) if image_mode else h
+    if image_mode and distance_mm >= hyper_setting:
+        # Protect an exact converted hyperfocal boundary from inverse-roundoff.
+        result.update(far_mm=math.inf, total_dof_mm=math.inf, rear_dof_mm=math.inf)
+    offset = v if image_mode else 0.0
+    return {**result, "near_mm": result["near_mm"] + offset,
+            "far_mm": result["far_mm"] + offset, "hyperfocal_mm": hyper_setting,
+            "distance_datum": datum, "focus_distance_mm": float(distance_mm),
+            "principal_object_distance_mm": s, "focused_image_distance_mm": v,
+            "principal_hyperfocal_mm": h,
+            "hyperfocal_branch_limited": image_mode and h < 2 * float(focal_mm)}
 
 
 def bellows(focal_mm, extension_mm):
@@ -148,11 +224,11 @@ class Component:
     distribution: str = "Uniform"
 
     def __post_init__(self):
-        if not str(self.name).strip():
+        if not isinstance(self.name, str) or not self.name.strip():
             raise ValueError("Each component needs a name.")
         object.__setattr__(self, "nominal_mm", finite(self.nominal_mm, "Nominal dimension", nonnegative=True))
         object.__setattr__(self, "tolerance_mm", finite(self.tolerance_mm, "Tolerance", nonnegative=True))
-        if self.sign not in (-1, 1):
+        if isinstance(self.sign, (bool, np.bool_)) or self.sign not in (-1, 1):
             raise ValueError("Component sign must be +1 or -1.")
         if self.distribution not in ("Uniform", "Normal (±3σ)"):
             raise ValueError("Distribution must be Uniform or Normal (±3σ).")
@@ -170,13 +246,32 @@ def check_components(components):
 def stack_up(components: list[Component], target_mm):
     check_components(components)
     target = finite(target_mm, "Target sensor plane")
-    actual = math.fsum(c.sign * c.nominal_mm for c in components)
-    tol = math.fsum(c.tolerance_mm for c in components)
-    sigma = math.sqrt(math.fsum(c.sigma_mm ** 2 for c in components))
+    try:
+        actual = math.fsum(c.sign * c.nominal_mm for c in components)
+        tol = math.fsum(c.tolerance_mm for c in components)
+    except OverflowError as exc:
+        raise ValueError("Parameters exceed the numerical range of this model.") from exc
+    sigma = math.hypot(*(c.sigma_mm for c in components))
+    if not all(math.isfinite(v) for v in (actual, tol, sigma, actual - target, actual + tol, actual - tol)):
+        raise ValueError("Parameters exceed the numerical range of this model.")
     return {"target_mm": target, "actual_mm": actual, "error_mm": actual - target,
             "required_correction_mm": target - actual,
             "tolerance_envelope_min_mm": actual - tol, "tolerance_envelope_max_mm": actual + tol,
-            "analytic_sigma_mm": sigma}
+            "analytic_sigma_mm": sigma, "stated_tolerance_mm": tol,
+            "bounded_worst_case": all(c.distribution == "Uniform" or c.tolerance_mm == 0 for c in components)}
+
+
+def wilson_interval(failures, samples):
+    """Two-sided 95% Wilson score interval for independent Bernoulli trials."""
+    n = integer(samples, "Samples", 1, 2**53)
+    k = integer(failures, "Failures", 0, n)
+    z = 1.959963984540054
+    p = k / n
+    z2n = z * z / n
+    center = (p + z2n / 2) / (1 + z2n)
+    half = z * math.sqrt(p * (1 - p) / n + z2n / (4 * n)) / (1 + z2n)
+    return (0.0 if k == 0 else max(0.0, center - half),
+            1.0 if k == n else min(1.0, center + half))
 
 
 def monte_carlo(components: list[Component], target_mm, lower_error_mm, upper_error_mm,
@@ -198,11 +293,14 @@ def monte_carlo(components: list[Component], target_mm, lower_error_mm, upper_er
     errors = totals - stats["target_mm"]
     p025, p975 = np.quantile(errors, [0.025, 0.975])
     outside = int(np.count_nonzero((errors < low) | (errors > high)))
+    ci_low, ci_high = wilson_interval(outside, count)
     result = {**stats, "samples": count, "seed": seed, "mean_error_mm": float(errors.mean()),
               "sample_std_mm": float(errors.std(ddof=1)), "p025_error_mm": float(p025),
               "p975_error_mm": float(p975), "lower_error_limit_mm": low, "upper_error_limit_mm": high,
               "out_of_spec_count": outside, "out_of_spec_fraction": outside / count,
-              "yield_fraction": 1 - outside / count}
+              "yield_fraction": 1 - outside / count,
+              "failure_probability_ci95_low": ci_low, "failure_probability_ci95_high": ci_high,
+              "failure_probability_ci_method": "Wilson score, two-sided 95%"}
     return result, errors
 
 

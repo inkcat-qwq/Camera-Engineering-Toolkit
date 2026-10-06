@@ -1,14 +1,22 @@
 {
-  "schema_version": 1,
-  "toolkit_version": "1.0.0",
+  "schema_version": 2,
+  "toolkit_version": "1.2.0",
   "tool": "Large Format",
-  "created_utc": "2026-10-06T09:58:34.561218+00:00",
+  "created_utc": "2026-10-06T11:50:33.299161+00:00",
   "inputs": {
     "format": {
       "name": "4 × 5 sheet",
       "width_mm": 120.0,
       "height_mm": 96.0,
-      "note": "Approximate usable image area, not sheet dimensions. Measure the holder aperture."
+      "note": "Representative holder opening / usable image area; not a universal holder specification. Measure your holder. Nominal sheet size is shown separately.",
+      "preset_id": "sheet-4x5",
+      "category": "sheet_film",
+      "active_width_mm": 120.0,
+      "active_height_mm": 96.0,
+      "nominal_width_mm": 127.0,
+      "nominal_height_mm": 101.6,
+      "units": "mm",
+      "source": "Nominal inch designation × 25.4; active area is a CET illustrative holder opening, not a certified measurement."
     },
     "focal_mm": 150.0,
     "extension_mm": 200.0,

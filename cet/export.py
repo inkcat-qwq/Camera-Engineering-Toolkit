@@ -19,7 +19,7 @@ def clean(value):
 
 
 def report(tool, inputs, results):
-    return clean({"schema_version": 1, "toolkit_version": __version__, "tool": tool,
+    return clean({"schema_version": 2, "toolkit_version": __version__, "tool": tool,
                   "created_utc": datetime.now(timezone.utc).isoformat(),
                   "inputs": inputs, "results": results})
 
