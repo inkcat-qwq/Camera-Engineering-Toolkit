@@ -320,9 +320,7 @@ def design_tool():
     a, b = st.columns([1, 1.75], gap="large")
     with a:
         target = number("Required flange-to-sensor distance (mm)", 70, "design_target", maximum=10000)
-        width = number("Back envelope width (mm)", 80, "design_width", maximum=2000)
-        height = number("Back envelope height (mm)", 70, "design_height", maximum=2000)
-        st.caption(t("Lens flange is Z = 0; positive Z points toward the sensor. Back envelope dimensions are recorded only; no collision or mounting-hole analysis is implied."))
+        st.caption(t("Lens flange is Z = 0; positive Z points toward the sensor. The dimension chain uses distances along the optical axis."))
     with b:
         st.subheader(t("Sensor-plane stack"))
         components = component_editor("design", DEFAULT_COMPONENTS)
@@ -332,6 +330,13 @@ def design_tool():
                 ("Required net correction", f"{result['required_correction_mm']:+.4f} mm")])
     draw(charts.stack_plot(components, target, dark(), language=st.session_state.get("p_language", "en")))
     st.caption(t("Positive plane error means the sensor is too far from the lens flange. Positive correction adds net spacing; negative correction removes it. A tolerance envelope sums stated ± values; it is not a guaranteed bound for unbounded normal distributions."))
+    with st.expander(t("Back envelope record (not used in calculations)"), expanded=False):
+        st.caption(t("Width and height are saved with the exported record. They do not affect the sensor-plane position, error or correction. No collision or mounting-hole analysis is performed."))
+        a, b = st.columns(2)
+        with a:
+            width = number("Back envelope width (mm)", 80, "design_width", maximum=2000)
+        with b:
+            height = number("Back envelope height (mm)", 70, "design_height", maximum=2000)
     exports("Camera Design", {"flange_distance_mm": target, "back_width_mm": width, "back_height_mm": height,
                                "components": component_records(components)}, result)
 

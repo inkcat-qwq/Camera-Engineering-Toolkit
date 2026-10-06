@@ -1,3 +1,7 @@
+# v1.1.1 — 2026-10-06
+
+Moved Camera Design's back width and height into a collapsed record section below the results, labelled as not used in calculations in both languages. The main input explanation now identifies the optical-axis dimension chain. Existing field values and exported records are preserved.
+
 # v1.1.0 — 2026-10-06
 
 Added English / Simplified Chinese selection at the top of the sidebar. All seven workspaces translate navigation, parameters, metrics, preset descriptions, comparison-table headers, distribution options, model notes, validation messages and engineering chart labels. Switching languages keeps custom dimensions, canonical selections, component records and existing Monte Carlo results.
