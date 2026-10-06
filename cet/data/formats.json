@@ -1,0 +1,16 @@
+[
+  {"name":"135 / Full frame", "width_mm":36, "height_mm":24, "note":"Nominal 35 mm still-image aperture; actual active areas may vary."},
+  {"name":"APS-C (23.5 × 15.6)", "width_mm":23.5, "height_mm":15.6, "note":"Representative APS-C area, not a universal camera specification."},
+  {"name":"APS-C (22.3 × 14.9)", "width_mm":22.3, "height_mm":14.9, "note":"Representative smaller APS-C area; check the camera specification."},
+  {"name":"Micro Four Thirds", "width_mm":17.3, "height_mm":13, "note":"Representative 4:3 active area."},
+  {"name":"Medium format 44 × 33", "width_mm":44, "height_mm":33, "note":"Rounded representative digital format; use custom dimensions for a specific back."},
+  {"name":"Medium format 48 × 36", "width_mm":48, "height_mm":36, "note":"Generic 48 × 36 mm digital image area; no camera model implied."},
+  {"name":"Medium format 54 × 40", "width_mm":54, "height_mm":40, "note":"Rounded representative digital format."},
+  {"name":"645 film", "width_mm":56, "height_mm":41.5, "note":"Representative exposed aperture. Film gates vary by camera."},
+  {"name":"6 × 6 film", "width_mm":56, "height_mm":56, "note":"Representative exposed aperture. Film gates vary by camera."},
+  {"name":"6 × 7 film", "width_mm":69, "height_mm":56, "note":"Representative exposed aperture. Film gates vary by camera."},
+  {"name":"6 × 9 film", "width_mm":84, "height_mm":56, "note":"Representative exposed aperture. Film gates vary by camera."},
+  {"name":"4 × 5 sheet", "width_mm":120, "height_mm":96, "note":"Approximate usable image area, not sheet dimensions. Measure the holder aperture."},
+  {"name":"5 × 7 sheet", "width_mm":178, "height_mm":127, "note":"Approximate usable image area, not sheet dimensions. Measure the holder aperture."},
+  {"name":"8 × 10 sheet", "width_mm":244, "height_mm":193, "note":"Approximate usable image area, not sheet dimensions. Measure the holder aperture."}
+]

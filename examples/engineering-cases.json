@@ -1,0 +1,13 @@
+{
+  "note": "Hypothetical examples, not certified camera interface specifications",
+  "field_of_view": {"width_mm":48,"height_mm":36,"focal_mm":80},
+  "large_format": {"width_mm":120,"height_mm":96,"focal_mm":150,"extension_mm":300,"image_circle_mm":210,"shift_x_mm":0,"shift_y_mm":15},
+  "tolerance_stack": {
+    "target_mm":70,"lower_error_mm":-0.1,"upper_error_mm":0.1,"samples":50000,"seed":42,
+    "components":[
+      {"name":"Body register","nominal_mm":40,"tolerance_mm":0.05,"sign":1,"distribution":"Uniform"},
+      {"name":"Adapter","nominal_mm":10,"tolerance_mm":0.03,"sign":1,"distribution":"Uniform"},
+      {"name":"Back to sensor","nominal_mm":20,"tolerance_mm":0.02,"sign":1,"distribution":"Uniform"}
+    ]
+  }
+}
