@@ -1,5 +1,7 @@
 # Deployment
 
+Public deployment: **https://camera-engineering-toolkit.streamlit.app/**. Source: `inkcat-qwq/Camera-Engineering-Toolkit`, branch `main`, entry point `app.py`, Python 3.14. The initial deployment was verified on 2026-10-06. Visitors do not need to install Python.
+
 ## Streamlit Community Cloud
 
 1. Store this project in a GitHub repository, preserving the directory structure.

@@ -12,7 +12,7 @@ from cet.core import (Component, Format, bellows, component_records, coverage, d
 from cet.export import report, to_csv, to_json
 
 st.set_page_config(page_title="Camera Engineering Toolkit", page_icon="◉", layout="wide",
-                   initial_sidebar_state="expanded", menu_items={
+                   initial_sidebar_state="auto", menu_items={
                        "About": "Camera Engineering Toolkit v1.0 · MIT · Paraxial engineering models"})
 
 # Keep tool inputs when Streamlit removes widgets belonging to another tool.

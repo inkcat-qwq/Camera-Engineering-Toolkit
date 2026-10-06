@@ -2,6 +2,8 @@
 
 **An open-source photographic and camera engineering workbench.**
 
+**[Open the live app](https://camera-engineering-toolkit.streamlit.app/)** · [Source code](https://github.com/inkcat-qwq/Camera-Engineering-Toolkit) · [Automated validation](https://github.com/inkcat-qwq/Camera-Engineering-Toolkit/actions)
+
 Calculate image geometry, compare lenses, estimate depth of field, check large-format coverage, build mechanical stacks and simulate manufacturing variation. An English Streamlit interface keeps editable inputs next to numerical results and engineering diagrams. Choose **Light, Dark or System** from the **⋮ menu** at the top right.
 
 ![Field of View workspace](docs/screenshots/field-of-view.jpg)
@@ -40,7 +42,7 @@ On Windows, `launch.bat` creates a project-local environment on first use and op
 
 ## Deployment
 
-The application requires a Python server. GitHub Pages cannot execute it. See [deployment instructions](docs/DEPLOYMENT.md) for Streamlit Community Cloud and Docker. No database, API keys or external calculation service is required.
+The public instance runs on Streamlit Community Cloud from `main/app.py` with Python 3.14. The application requires a Python server. GitHub Pages cannot execute it. See [deployment instructions](docs/DEPLOYMENT.md) for Streamlit Community Cloud and Docker. No database, API keys or external calculation service is required.
 
 ## Examples
 
