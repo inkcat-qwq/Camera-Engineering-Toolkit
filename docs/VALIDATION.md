@@ -1,3 +1,9 @@
+# Validation record — v1.1.0
+
+Validated on Windows / Python 3.14 on 2026-10-06: **77 automated tests passed**. The bilingual tests cover all seven workspaces in Chinese and English, round-trip switching, custom dimensions and inverse-FOV choices, comparison values, Chinese validation, custom Chinese component names, unchanged Monte Carlo samples and stable export records. Chinese charts render using the bundled Noto Sans SC font without missing-glyph warnings. The font is instantiated at regular weight 400 for legibility; the glyph checks also passed after that change.
+
+Source distribution and wheel include the font and its OFL license. Local browser checks verified the sidebar language selector, translated FOV controls and chart labels, consistent numerical values and the Chinese camera-design workspace.
+
 # Validation record — v1.0.0
 
 Validated locally on Windows with Python 3.14, Streamlit 1.65.0, NumPy 2.5.3, Matplotlib 3.11.2 and pandas 3.0.6 on 2026-10-06.

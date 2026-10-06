@@ -4,11 +4,15 @@
 
 **[Open the live app](https://camera-engineering-toolkit.streamlit.app/)** · [Source code](https://github.com/inkcat-qwq/Camera-Engineering-Toolkit) · [Automated validation](https://github.com/inkcat-qwq/Camera-Engineering-Toolkit/actions)
 
-Calculate image geometry, compare lenses, estimate depth of field, check large-format coverage, build mechanical stacks and simulate manufacturing variation. An English Streamlit interface keeps editable inputs next to numerical results and engineering diagrams. Choose **Light, Dark or System** from the **⋮ menu** at the top right.
+Calculate image geometry, compare lenses, estimate depth of field, check large-format coverage, build mechanical stacks and simulate manufacturing variation. Choose **English** or **简体中文** using **Language / 语言** at the top of the sidebar. All seven workspaces include translated parameters, results, explanations, validation messages and chart labels. Inputs, editable component records and completed simulations persist when switching languages in the same session. Choose **Light, Dark or System** from the **⋮ menu** at the top right.
+
+**中文使用：** 打开侧栏，在顶部 **Language / 语言** 中选择 **简体中文**。七个工具的参数、结果、说明、错误提示和图表均支持中文；切换语言会保留本次会话中的输入与模拟结果。窄屏设备可先点击左上角按钮展开侧栏。
+
+JSON/CSV records retain stable English field names and canonical option values for compatibility with existing scripts. User-entered component names are preserved exactly, including Chinese. Streamlit's own menu, table toolbar and hosting controls retain the framework's language. Chart fonts are bundled, so Chinese labels do not depend on system fonts or a runtime download.
 
 ![Field of View workspace](docs/screenshots/field-of-view.jpg)
 
-## Tools in v1.0
+## Tools in v1.1
 
 | Workspace | Capabilities |
 | --- | --- |
@@ -76,6 +80,7 @@ Tests cover physical reference cases, inverse round trips, thin-lens blur at DOF
 app.py                   Streamlit interface
 cet/core.py              UI-independent calculation library
 cet/charts.py            Matplotlib engineering diagrams
+cet/i18n.py              English / Simplified Chinese presentation layer
 cet/export.py            JSON / CSV records
 cet/cli.py               Optional command-line entry point
 cet/data/formats.json    Representative active-image-area presets
@@ -84,4 +89,4 @@ docs/                    Models, deployment, release notes and screenshots
 examples/                Example parameter sets and exported results
 ```
 
-Contributions should include units, an explained convention and a numerical reference case for any new model. MIT licensed; see [LICENSE](LICENSE).
+Contributions should include units, an explained convention and a numerical reference case for any new model. Application code is MIT licensed; see [LICENSE](LICENSE). The bundled [Noto Sans SC font](https://github.com/google/fonts/tree/main/ofl/notosanssc) uses the SIL Open Font License 1.1; its license is included in `cet/data/fonts/OFL.txt`.
