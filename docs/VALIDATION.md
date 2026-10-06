@@ -10,7 +10,7 @@ Validated locally on Windows with Python 3.14, Streamlit 1.65.0, NumPy 2.5.3, Ma
 - Browser table edit: adapter 10.00 → 10.25 mm changed the actual stack to 70.25 mm, error to +0.25 mm and required correction to -0.25 mm. Values persisted after switching workspaces.
 - Screenshots were captured from the running app in `docs/screenshots/`.
 
-The first automated cold start exceeded the initial 30-second timeout while importing/rendering; the UI test timeout is now 60 seconds. Subsequent full suites passed. The browser's viewport override did not change its observed width, so mobile-device visual validation is not claimed. The layout uses Streamlit's responsive columns and a narrow-screen spacing rule.
+The first automated cold start exceeded the initial 30-second timeout while importing/rendering; the UI test timeout is now 60 seconds. Subsequent full suites passed. An initial Edge viewport override did not affect the target tab. A later public-app check in the in-app browser verified the layout at an observed 355 CSS-pixel width: navigation starts collapsed, inputs stack vertically, and text/controls remain readable. This is a browser viewport check, not a physical-device test.
 
 Docker execution has not been tested in this local environment. [GitHub Actions run 37447080161](https://github.com/inkcat-qwq/Camera-Engineering-Toolkit/actions/runs/37447080161) passed both tests and package builds on Python 3.11, 3.12 and 3.14.
 
